@@ -45,4 +45,40 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Check if the user has a specific role.
+     *
+     * @param string $role
+     * @return bool
+     */
+    public function hasRole($role)
+    {
+        // Assuming a 'role' column exists on the users table
+        return $this->role === $role;
+    }
+
+    /**
+     * Get the orders for the user.
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Get the production tasks for the user.
+     */
+    public function productionTasks()
+    {
+        return $this->hasMany(ProductionTask::class);
+    }
+
+    /**
+     * Get the shipments for the user.
+     */
+    public function shipments()
+    {
+        return $this->hasMany(Shipment::class);
+    }
 }
