@@ -55,4 +55,33 @@ class LogisticsController extends Controller
 
         return redirect()->back()->with('success', 'Shipment marked as delivered.');
     }
+    public function show($id)
+{
+    $order = Order::with(['product', 'client'])->findOrFail($id);
+    return view('logistics.orders.show', compact('order'));
+}
+
+public function storeShipment(Request $request, $id)
+{
+    $request->validate([
+        'driver_name' => 'required|string|max:255',
+        'vehicle' => 'required|string|max:255',
+        'tracking_link' => 'nullable|url',
+    ]);
+
+    \App\Models\Shipment::create([
+        'order_id' => $id,
+        'driver_name' => $request->driver_name,
+        'vehicle' => $request->vehicle,
+        'tracking_link' => $request->tracking_link,
+        'status' => 'in_transit',
+    ]);
+
+    $order = Order::findOrFail($id);
+    $order->status = 'shipped';
+    $order->save();
+
+    return redirect()->route('logistics.orders.index')->with('success', 'Shipment created and order marked as shipped.');
+}
+
 }

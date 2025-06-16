@@ -47,6 +47,12 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         // ...existing code...
-        'role' => \App\Http\Middleware\RoleMiddleware::class,
+        'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
+        'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
+        'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
     ];
 }
+
+Route::middleware(['role:admin'])->group(function () {
+    // ...
+});

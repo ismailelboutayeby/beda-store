@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -34,7 +34,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
      * @return array<string, string>
      */
@@ -47,35 +47,23 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if the user has a specific role.
-     *
-     * @param string $role
-     * @return bool
-     */
-    public function hasRole($role)
-    {
-        // Assuming a 'role' column exists on the users table
-        return $this->role === $role;
-    }
-
-    /**
-     * Get the orders for the user.
+     * Get the orders for the user (as a client).
      */
     public function orders()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(Order::class, 'client_id');
     }
 
     /**
-     * Get the production tasks for the user.
+     * Get the production tasks assigned to the user.
      */
     public function productionTasks()
     {
-        return $this->hasMany(ProductionTask::class);
+        return $this->hasMany(ProductionTask::class, 'assigned_to');
     }
 
     /**
-     * Get the shipments for the user.
+     * Get the shipments assigned to the user (if applicable).
      */
     public function shipments()
     {

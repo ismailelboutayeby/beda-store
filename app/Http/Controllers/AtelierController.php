@@ -6,30 +6,37 @@ use App\Models\Order;
 use App\Models\ProductionTask;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AtelierController extends Controller
 {
-    // 1. View orders ready for production
+    /**
+     * List all orders ready for production.
+     */
     public function index()
     {
         $orders = Order::where('status', 'validated_warehouse')->get();
         return view('atelier.orders.index', compact('orders'));
     }
 
-    // 2. Assign production tasks
-    public function assignTasks($orderId)
+    /**
+     * Show a specific order and display the task assignment form.
+     */
+    public function show($orderId)
     {
-        $order = Order::findOrFail($orderId);
-        $users = User::role('atelier_worker')->get(); // make sure this role exists
-        return view('atelier.orders.assign', compact('order', 'users'));
+        $order = Order::with(['product', 'client'])->findOrFail($orderId);
+        $users = User::role('atelier_worker')->get(); // Ensure role exists
+        return view('atelier.orders.show', compact('order', 'users'));
     }
 
-    // 3. Store assigned task
+    /**
+     * Store the assigned task for the selected order.
+     */
     public function storeTask(Request $request, $orderId)
     {
         $request->validate([
             'assigned_to' => 'required|exists:users,id',
-            'description' => 'required|string',
+            'description' => 'required|string|max:1000',
         ]);
 
         ProductionTask::create([
@@ -40,15 +47,17 @@ class AtelierController extends Controller
             'status' => 'pending',
         ]);
 
-        // Set order status
+        // Update order status to in production
         $order = Order::findOrFail($orderId);
         $order->status = 'in_production';
         $order->save();
 
-        return redirect()->route('atelier.orders.index')->with('success', 'Task assigned.');
+        return redirect()->route('atelier.orders.index')->with('success', 'Task assigned and order marked as in production.');
     }
 
-    // 4. Mark production as complete
+    /**
+     * Mark the order as ready for shipping.
+     */
     public function markAsReady($orderId)
     {
         $order = Order::findOrFail($orderId);
@@ -57,4 +66,12 @@ class AtelierController extends Controller
 
         return redirect()->route('atelier.orders.index')->with('success', 'Order marked as ready for shipping.');
     }
+    public function exportTask($taskId)
+{
+    $task = \App\Models\ProductionTask::with(['order', 'user'])->findOrFail($taskId);
+
+    $pdf = Pdf::loadView('pdf.task', compact('task'));
+
+    return $pdf->download('task_' . $task->id . '.pdf');
+}
 }
