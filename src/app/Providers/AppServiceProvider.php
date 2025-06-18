@@ -11,7 +11,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // mergeConfigFrom removed to fix array_merge error
     }
 
     /**
