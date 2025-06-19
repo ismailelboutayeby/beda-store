@@ -40,9 +40,11 @@ class AuthenticatedSessionController extends Controller
         } elseif ($user->hasRole('logistic')) {
             return redirect('/logistics/orders');
         } elseif ($user->hasRole('admin')) {
-            return redirect('/invoices');
-        } elseif ($user->hasRole('client')) {
-            return redirect('/client/orders');
+            return redirect()->route('admin.dashboard');
+        } elseif ($user->hasRole('stock')) {
+            return redirect()->route('stock.dashboard');
+        } else {
+            return redirect()->route('user.dashboard');
         }
 
         return redirect('/'); // Fallback route

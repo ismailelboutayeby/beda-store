@@ -12,6 +12,10 @@ Route::get('/', function () {
     return view('home'); // This should be your custom homepage
 });
 
+Route::get('/home', function () {
+    return view('home');
+})->name('home');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -55,11 +59,12 @@ Route::middleware(['role:logistic'])->prefix('logistics')->name('logistics.')->g
     Route::post('/orders/{id}/assign', [LogisticsController::class, 'store'])->name('orders.store');
 });
 
-Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'check_role_or_permission:Admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/users', [AdminController::class, 'index'])->name('users.index');
     Route::get('/users/{user}/edit', [AdminController::class, 'edit'])->name('users.edit');
     Route::put('/users/{user}', [AdminController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [AdminController::class, 'destroy'])->name('users.destroy');
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 });
 
 // INVOICES ROUTES
@@ -69,3 +74,19 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/invoices/{id}/paid', [\App\Http\Controllers\InvoiceController::class, 'markPaid'])->name('invoices.paid');
     Route::post('/invoices/{id}/failed', [\App\Http\Controllers\InvoiceController::class, 'markFailed'])->name('invoices.failed');
 });
+
+Route::middleware(['auth', 'check_role_or_permission:Stock'])
+    ->get('/stock/dashboard', [\App\Http\Controllers\StockController::class, 'index'])
+    ->name('stock.dashboard');
+
+Route::middleware(['auth'])
+    ->get('/user/dashboard', [\App\Http\Controllers\UserController::class, 'index'])
+    ->name('user.dashboard');
+
+Route::get('/products', function () {
+    return view('products.index');
+})->name('products.index');
+
+Route::get('/boutique', function () {
+    return view('boutique');
+})->name('boutique');

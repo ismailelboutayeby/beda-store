@@ -40,4 +40,11 @@ class AdminController extends Controller
         $user->delete();
         return redirect()->route('admin.users.index')->with('success', 'User deleted.');
     }
+
+    // 5. Admin dashboard
+    public function dashboard()
+    {
+        // You can add summary data here for the dashboard view
+        return view('admin.dashboard');
+    }
 }

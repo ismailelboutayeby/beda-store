@@ -31,6 +31,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A7 7 0 1117.805 5.12M12 12a5 5 0 100-10 5 5 0 000 10z" />
                         </svg>
                         <span>Compte</span>
+                        @if(auth()->check() && auth()->user()->hasRole('admin'))
+                            <span class="bg-red-600 text-white text-xs px-2 py-0.5 rounded ml-2">Admin</span>
+                        @endif
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                     </button>
                     <div x-show="open" x-cloak @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-50" role="menu" aria-orientation="vertical" aria-labelledby="user-menu" x-transition>
@@ -80,22 +83,16 @@
         <div class="flex-1 flex justify-center">
             <nav class="flex space-x-8">
                 @php $user = Auth::user(); $route = request()->route() ? request()->route()->getName() : null; @endphp
-                <a href="/home" class="text-black font-semibold hover:text-blue-600 hover:underline transition tracking-wide {{ request()->is('home') ? 'underline text-blue-600' : '' }}">Accueil</a>
-                <a href="/products" class="text-black font-semibold hover:text-blue-600 hover:underline transition tracking-wide {{ request()->is('products*') ? 'underline text-blue-600' : '' }}">Produits</a>
+                <a href="{{ route('home') }}" class="text-black font-semibold hover:text-blue-600 hover:underline transition tracking-wide {{ request()->is('home') ? 'underline text-blue-600' : '' }}">Accueil</a>
+                <a href="{{ route('products.index') }}" class="text-black font-semibold hover:text-blue-600 hover:underline transition tracking-wide {{ request()->is('products*') ? 'underline text-blue-600' : '' }}">Produits</a>
                 @if($user && $user->hasRole('admin'))
-                    <div class="relative group inline-block">
-                        <button class="text-black font-semibold hover:text-blue-600 hover:underline transition tracking-wide flex items-center gap-1 focus:outline-none" aria-haspopup="true" aria-expanded="false">
-                            Gestion
-                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-                        </button>
-                        <div class="absolute left-0 mt-2 w-48 bg-white border rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-50" role="menu">
-                            <a href="/dashboard" class="block px-4 py-2 text-black hover:bg-blue-100 {{ request()->is('dashboard') ? 'bg-blue-100 font-bold' : '' }}" role="menuitem">Tableau de bord</a>
-                            <a href="/stock-management" class="block px-4 py-2 text-black hover:bg-blue-100 {{ request()->is('stock-management') ? 'bg-blue-100 font-bold' : '' }}" role="menuitem">Gestion de stock</a>
-                            <a href="/production-management" class="block px-4 py-2 text-black hover:bg-blue-100 {{ request()->is('production-management') ? 'bg-blue-100 font-bold' : '' }}" role="menuitem">Gestion de production</a>
-                        </div>
-                    </div>
+                    <a href="{{ route('admin.dashboard') }}" class="text-black font-semibold hover:text-blue-600 hover:underline transition tracking-wide {{ request()->routeIs('admin.dashboard') ? 'underline text-blue-600' : '' }}">Dashboard</a>
+                @elseif($user && $user->hasRole('stock'))
+                    <a href="{{ route('stock.dashboard') }}" class="text-black font-semibold hover:text-blue-600 hover:underline transition tracking-wide {{ request()->routeIs('stock.dashboard') ? 'underline text-blue-600' : '' }}">Dashboard</a>
+                @elseif($user)
+                    <a href="{{ route('user.dashboard') }}" class="text-black font-semibold hover:text-blue-600 hover:underline transition tracking-wide {{ request()->routeIs('user.dashboard') ? 'underline text-blue-600' : '' }}">Dashboard</a>
                 @endif
-                <a href="/boutique" class="text-black font-semibold hover:text-pink-600 hover:underline transition tracking-wide {{ request()->is('boutique') ? 'underline text-pink-600' : '' }}">Boutique</a>
+                <a href="{{ route('boutique') }}" class="text-black font-semibold hover:text-pink-600 hover:underline transition tracking-wide {{ request()->is('boutique') ? 'underline text-pink-600' : '' }}">Boutique</a>
             </nav>
         </div>
         <!-- Right: Language & Dark Mode -->
@@ -121,4 +118,4 @@
     </div>
 </div>
 
-{{-- Make sure Alpine.js is loaded in your layout (e.g., <script src="//unpkg.com/alpinejs" defer></script>))
+{{-- Alpine.js should be loaded in your layout. --}}
