@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('client_id');
             $table->unsignedBigInteger('product_id');
             $table->string('status');
+            $table->text('notes')->nullable();
             $table->unsignedBigInteger('assigned_designer_id')->nullable();
             $table->unsignedBigInteger('assigned_warehouse_id')->nullable();
             $table->unsignedBigInteger('assigned_production_id')->nullable();

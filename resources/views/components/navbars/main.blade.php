@@ -6,30 +6,62 @@
             <img src="{{ asset('images/Beda-logo_Black.png') }}" alt="Beda Logo" class="h-6 w-auto drop-shadow-md rounded-full bg-white p-1 transition-transform duration-200 hover:scale-110">
         </div>
         <!-- Center: Pretty Search Bar -->
-       <div class="flex-1 flex justify-start">
-    <div class="relative w-full max-w-xs">
-        <input type="text" placeholder="Rechercher..."
-            class="w-full py-2 pl-5 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-400 hover:ring-blue-600 hover:shadow-md text-base bg-white dark:bg-white dark:text-gray-900 shadow-sm transition placeholder-gray-400">
-        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400 dark:text-blue-300 hover:text-blue-600">
-            <!-- Heroicon: Magnifying Glass -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
-            </svg>
-        </span>
-    </div>
-</div>
+        <div class="flex-1 flex justify-start">
+            <div class="relative w-full max-w-xs">
+                <input type="text" placeholder="Rechercher..."
+                    class="w-full py-2 pl-5 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-400 hover:ring-blue-600 hover:shadow-md text-base bg-white dark:bg-white dark:text-gray-900 shadow-sm transition placeholder-gray-400">
+                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400 dark:text-blue-300 hover:text-blue-600">
+                    <!-- Heroicon: Magnifying Glass -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+                    </svg>
+                </span>
+            </div>
+        </div>
 
         <!-- Right: Account + Basket -->
         <div class="flex items-center space-x-4 ml-6">
-            <a href="/home" class="flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800 text-blue-700 dark:text-blue-200 font-semibold shadow hover:scale-105 hover:bg-blue-200 dark:hover:bg-blue-700 transition">
-                <!-- Heroicon: User -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A7 7 0 1117.805 5.12M12 12a5 5 0 100-10 5 5 0 000 10z" />
-                </svg>
-                <span>Compte</span>
-            </a>
+            @auth
+                <div x-data="{ open: false }" class="relative inline-block">
+                    <button @click="open = !open" @keydown.escape="open = false" :aria-expanded="open ? 'true' : 'false'" class="flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800 text-blue-700 dark:text-blue-200 font-semibold shadow hover:scale-105 hover:bg-blue-200 dark:hover:bg-blue-700 transition focus:outline-none" id="user-menu" aria-haspopup="true" tabindex="0">
+                        <!-- Heroicon: User -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A7 7 0 1117.805 5.12M12 12a5 5 0 100-10 5 5 0 000 10z" />
+                        </svg>
+                        <span>Compte</span>
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div x-show="open" x-cloak @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-50" role="menu" aria-orientation="vertical" aria-labelledby="user-menu" x-transition>
+                        <a href="/compte" class="flex items-center gap-2 px-4 py-2 text-black hover:bg-blue-100 focus:bg-blue-100 focus:outline-none" role="menuitem" tabindex="0" @click="open = false">
+                            <!-- User Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A7 7 0 1117.805 5.12M12 12a5 5 0 100-10 5 5 0 000 10z" />
+                            </svg>
+                            Mon Compte
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}" @submit="open = false">
+                            @csrf
+                            <button type="submit" class="flex items-center gap-2 w-full text-left px-4 py-2 text-black hover:bg-blue-100 focus:bg-blue-100 focus:outline-none" role="menuitem" tabindex="0">
+                                <!-- Logout Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
+                                </svg>
+                                Se Déconnecter
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @else
+                <a href="/login" class="flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800 text-blue-700 dark:text-blue-200 font-semibold shadow hover:scale-105 hover:bg-blue-200 dark:hover:bg-blue-700 transition">
+                    <!-- Heroicon: User -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A7 7 0 1117.805 5.12M12 12a5 5 0 100-10 5 5 0 000 10z" />
+                    </svg>
+                    <span>Compte</span>
+                </a>
+            @endauth
             <a href="/home" class="flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-pink-100 to-pink-200 dark:from-pink-900 dark:to-pink-800 text-pink-700 dark:text-pink-200 font-semibold shadow hover:scale-105 hover:bg-pink-200 dark:hover:bg-pink-700 transition">
                 <!-- Heroicon: Shopping Cart -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -47,10 +79,23 @@
         <!-- Center: Nav Links -->
         <div class="flex-1 flex justify-center">
             <nav class="flex space-x-8">
-                <a href="/home" class="text-black font-semibold hover:text-blue-600 hover:underline transition tracking-wide">Accueil</a>
-                <a href="/boutique" class="text-black font-semibold hover:text-pink-600 hover:underline transition tracking-wide">Boutique</a>
-                <a href="/a-propos" class="text-black font-semibold hover:text-green-600 hover:underline transition tracking-wide">À propos</a>
-                <a href="/contact" class="text-black font-semibold hover:text-yellow-600 hover:underline transition tracking-wide">Contact</a>
+                @php $user = Auth::user(); $route = request()->route() ? request()->route()->getName() : null; @endphp
+                <a href="/home" class="text-black font-semibold hover:text-blue-600 hover:underline transition tracking-wide {{ request()->is('home') ? 'underline text-blue-600' : '' }}">Accueil</a>
+                <a href="/products" class="text-black font-semibold hover:text-blue-600 hover:underline transition tracking-wide {{ request()->is('products*') ? 'underline text-blue-600' : '' }}">Produits</a>
+                @if($user && $user->hasRole('admin'))
+                    <div class="relative group inline-block">
+                        <button class="text-black font-semibold hover:text-blue-600 hover:underline transition tracking-wide flex items-center gap-1 focus:outline-none" aria-haspopup="true" aria-expanded="false">
+                            Gestion
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div class="absolute left-0 mt-2 w-48 bg-white border rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-50" role="menu">
+                            <a href="/dashboard" class="block px-4 py-2 text-black hover:bg-blue-100 {{ request()->is('dashboard') ? 'bg-blue-100 font-bold' : '' }}" role="menuitem">Tableau de bord</a>
+                            <a href="/stock-management" class="block px-4 py-2 text-black hover:bg-blue-100 {{ request()->is('stock-management') ? 'bg-blue-100 font-bold' : '' }}" role="menuitem">Gestion de stock</a>
+                            <a href="/production-management" class="block px-4 py-2 text-black hover:bg-blue-100 {{ request()->is('production-management') ? 'bg-blue-100 font-bold' : '' }}" role="menuitem">Gestion de production</a>
+                        </div>
+                    </div>
+                @endif
+                <a href="/boutique" class="text-black font-semibold hover:text-pink-600 hover:underline transition tracking-wide {{ request()->is('boutique') ? 'underline text-pink-600' : '' }}">Boutique</a>
             </nav>
         </div>
         <!-- Right: Language & Dark Mode -->
@@ -75,3 +120,5 @@
         </div>
     </div>
 </div>
+
+{{-- Make sure Alpine.js is loaded in your layout (e.g., <script src="//unpkg.com/alpinejs" defer></script>))

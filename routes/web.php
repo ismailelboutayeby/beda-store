@@ -20,6 +20,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/compte', function () {
+        return view('compte');
+    })->name('compte');
 });
 
 require __DIR__.'/auth.php';
@@ -56,4 +60,12 @@ Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::get('/users/{user}/edit', [AdminController::class, 'edit'])->name('users.edit');
     Route::put('/users/{user}', [AdminController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [AdminController::class, 'destroy'])->name('users.destroy');
+});
+
+// INVOICES ROUTES
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/invoices', [\App\Http\Controllers\InvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('/invoices/{id}', [\App\Http\Controllers\InvoiceController::class, 'show'])->name('invoices.show');
+    Route::post('/invoices/{id}/paid', [\App\Http\Controllers\InvoiceController::class, 'markPaid'])->name('invoices.paid');
+    Route::post('/invoices/{id}/failed', [\App\Http\Controllers\InvoiceController::class, 'markFailed'])->name('invoices.failed');
 });

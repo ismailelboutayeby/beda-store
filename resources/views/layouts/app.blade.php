@@ -19,5 +19,6 @@ Only use the new layout with our navbar and custom styles. --}}
     <main class="py-6 px-4">
         @yield('content')
     </main>
+    <script src="//unpkg.com/alpinejs" defer></script>
 </body>
 </html>
